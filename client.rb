@@ -22,7 +22,7 @@ if x == "RShell_Open"
 		else
 			begin
 				if cmd.split(" ")[0].downcase == "cd" && cmd.split(" ")[1]
-					currentDir = `#{cmd}#{joiner}#{currentDirCommand}`.chomp
+					currentDir = `cd "#{currentDir}"#{joiner}#{cmd}#{joiner}#{currentDirCommand}`.chomp
 				end
 				out = `cd "#{currentDir}"#{joiner}#{cmd.chomp}`
 			rescue
