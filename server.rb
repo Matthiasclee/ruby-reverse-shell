@@ -4,7 +4,7 @@ host = "0.0.0.0"
 port = 3455
 
 server = TCPServer.new(host, port)
-
+puts "Listening on #{host}:#{port.to_s}"
 thr = Thread.new do
 	client = server.accept
 	client.puts "RShell_Open"
