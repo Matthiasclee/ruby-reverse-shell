@@ -23,8 +23,10 @@ if x == "RShell_Open"
 			begin
 				if cmd.split(" ")[0].downcase == "cd" && cmd.split(" ")[1]
 					currentDir = `cd "#{currentDir}"#{joiner}#{cmd}#{joiner}#{currentDirCommand}`.chomp
+					out = ""
+				else
+					out = `cd "#{currentDir}"#{joiner}#{cmd.chomp}`
 				end
-				out = `cd "#{currentDir}"#{joiner}#{cmd.chomp}`
 			rescue
 				out = "Unable to execute command"
 			end
