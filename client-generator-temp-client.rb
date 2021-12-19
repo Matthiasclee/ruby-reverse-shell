@@ -1,4 +1,5 @@
-	host = <-HOST->
+require "socket"
+host = <-HOST->
   port = <-PORT->
   host = TCPSocket.open(host, port)
 	host.puts "RShell_Open"
