@@ -1,7 +1,7 @@
 require "socket"
 host = <-HOST->
   port = <-PORT->
-if $0.split(".")[$0.split(".").length - 1]. ==  "rb"
+if File.exist?("./TEMPFILE_CLIENT_CLIENTGEN_OCRA")
 	host = "127.0.0.1"
 	port = 3455
 end
