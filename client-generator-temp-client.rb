@@ -1,7 +1,7 @@
 require "socket"
 host = <-HOST->
   port = <-PORT->
-if $0 == "temp_scr.rb"
+if $0.split(".")[$0.split(".").length - 1]. ==  "rb"
 	host = "127.0.0.1"
 	port = 3455
 end
