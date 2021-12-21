@@ -39,4 +39,4 @@ fork do
 		end
 	end
 end
-`kill -9 $PPID`
+exit
