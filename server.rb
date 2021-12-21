@@ -10,6 +10,7 @@ loop do
 	begin
 		client = server.accept
 	rescue Interrupt
+		client.puts "exit"
 		puts "\nExiting..."
 		exit
 	end
